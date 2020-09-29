@@ -39,3 +39,10 @@
 (setq mouse-wheel-progressive-speed nil)
 (setq mouse-wheel-follow-mouse 't)
 (setq scroll-step 1)
+
+(add-to-list 'load-path "~/.emacs.d/lisp/")
+
+(require 'flex)
+(require 'bison)
+(add-to-list 'auto-mode-alist '("\\.l\\'" . flex-mode))
+(add-to-list 'auto-mode-alist '("\\.y\\'" . bison-mode))
