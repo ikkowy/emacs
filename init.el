@@ -52,4 +52,8 @@
 
 (setq org-html-postamble nil)
 
+(setq org-support-shift-select t)
+
 (setq cmake-tab-width 4)
+
+(add-to-list 'auto-mode-alist '("\\.h\\'" . c++-mode))
