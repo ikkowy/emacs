@@ -50,16 +50,27 @@
 (put 'downcase-region 'disabled nil) ; Enable C-X C-L
 (put 'upcase-region 'disabled nil)   ; Enable C-X C-U
 
+;; Disable dialog boxes
+(setq use-dialog-box nil)
+
+;; Startup frame size
+(when window-system (set-frame-size (selected-frame) 120 35))
+
+;; Auto close pairs
+(electric-pair-mode 1)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; C/C++
 
-(setq-default c-basic-offset 4)
-
-(setq c-default-style "java")
-
-(setq cmake-tab-width 4)
+(setq c-default-style "linux"
+      c-basic-offset 4)
 
 (add-to-list 'auto-mode-alist '("\\.h\\'" . c++-mode))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; CMake
+
+(setq cmake-tab-width 4)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; LaTeX
@@ -73,8 +84,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Org Mode
 
-;; Enable some fancy mouse features
-(require 'org-mouse)
+(require 'org-mouse) ; Enable mouse features
 
 (add-hook 'org-mode-hook 'org-indent-mode)
 
@@ -92,18 +102,71 @@
 (setq org-image-actual-width nil)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Automatic package installation
 
-;; Configure MELPA
 (require 'package)
+
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
+
 (package-initialize)
 
+(unless package-archive-contents
+  (package-refresh-contents))
+
+(setq package-list '(dracula-theme treemacs org-bullets drag-stuff web-mode company))
+
+(dolist (package package-list)
+  (unless (package-installed-p package)
+    (package-install package)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Don't litter my init.el with package stuff
+
 (setq custom-file "~/.emacs.d/custom.el")
 (if (not (file-exists-p custom-file)) (make-empty-file custom-file))
 (load custom-file)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Load the editor theme if installed
 
-;; Load the editor theme if installed, use fallback if not
-(if (package-installed-p 'atom-one-dark-theme) (load-theme 'atom-one-dark t) (load-theme 'wombat))
+(if (package-installed-p 'dracula-theme)
+    (load-theme 'dracula t))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Treemacs settings
+
+(add-hook 'emacs-startup-hook 'treemacs)
+(setq treemacs-show-hidden-files nil)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Enable org-bullets
+
+(add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Enable drag-stuff
+
+(drag-stuff-global-mode 1)
+(drag-stuff-define-keys)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Enable web-mode
+
+(add-to-list 'auto-mode-alist '("\\.html\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.css\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.js\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.php\\'" . web-mode))
+
+(setq web-mode-script-padding 4)
+(setq web-mode-style-padding 4)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Enable company
+
+(add-hook 'after-init-hook 'global-company-mode)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Cursor settings
+
+(setq-default cursor-type 'bar)
+(set-cursor-color "#33adff")
