@@ -113,7 +113,7 @@
 (unless package-archive-contents
   (package-refresh-contents))
 
-(setq package-list '(dracula-theme treemacs org-bullets drag-stuff web-mode company))
+(setq package-list '(dracula-theme org-bullets drag-stuff web-mode company))
 
 (dolist (package package-list)
   (unless (package-installed-p package)
@@ -131,12 +131,6 @@
 
 (if (package-installed-p 'dracula-theme)
     (load-theme 'dracula t))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Treemacs settings
-
-(add-hook 'emacs-startup-hook 'treemacs)
-(setq treemacs-show-hidden-files nil)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Enable org-bullets
